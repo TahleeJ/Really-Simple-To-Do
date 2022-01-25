@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "869701574203",
+    "project_id": "really-simple-chat",
+    "storage_bucket": "really-simple-chat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:869701574203:android:089c537eb061cbf0a7461e",
+        "android_client_info": {
+          "package_name": "com.reallysimple.really_simple_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "869701574203-k6vt35habhuho3hajfqgtotuecv5jkbh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.reallysimple.really_simple_chat",
+            "certificate_hash": "2e6865f7b75006f8f00674697e893149b014dd58"
+          }
+        },
+        {
+          "client_id": "869701574203-pe51rpiutdm4hn7fr33ncmcb657hp9mc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcMnEMsIzOhnXRyCgrIU4nbdBQ_qhC5yA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "869701574203-pe51rpiutdm4hn7fr33ncmcb657hp9mc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
