@@ -1,0 +1,124 @@
+// Copyright 2018 The Flutter team. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+/*
+  Imports are linked to the packages included in the pubspec.yaml file
+ */
+import 'package:english_words/english_words.dart';
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+/*
+  The extension of this app as a StatelessWidget makes the app itself a widget as
+  well as everything inside of the app a widget.
+
+  Stateless widgets are immutable but Stateful widgets maintain a changeable state:
+  requires StatefulWidget that creates an instance of a State class, which actually persists
+ */
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  /*
+    A widget's main job is to provide a build method that describes how to display
+    the widget in terms of other, lower level widgets
+   */
+  @override
+  Widget build(BuildContext context) {
+    final wordPair = WordPair.random();
+    // return MaterialApp(
+    //   title: 'Welcome to Flutter',
+    //   /*
+    //     Scaffold widget provides a default app bar and a body that holds the widget
+    //     for the home screen
+    //    */
+    //   home: Scaffold(
+    //     appBar: AppBar(
+    //       title: const Text('Welcome to Flutter'),
+    //     ),
+    //     body: const Center(
+    //       child: RandomWords(),
+    //     ),
+    //   ),
+    // );
+
+    return const MaterialApp(
+        title: 'Startup Name Generator',
+        home: RandomWords()
+    );
+  }
+}
+
+class RandomWords extends StatefulWidget {
+  const RandomWords({Key? key}) : super(key: key);
+
+  /*
+    The underscore prefix occurs by default and helps to ensure privacy
+   */
+  @override
+  _RandomWordsState createState() => _RandomWordsState();
+}
+
+class _RandomWordsState extends State<RandomWords> {
+  final _suggestions = <WordPair>[];
+  final _biggerFont = const TextStyle(fontSize: 18.0);
+
+  /*
+    Function to build the ListView that displays a suggested word pairing
+   */
+  Widget _buildSuggestions() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16.0),
+      /*
+        itemBuilder to build a ListTile row for each suggested word pairing. When
+        i is odd, a Divider is added for visual separation, and when i is even, a
+        ListTile object is added
+       */
+      itemBuilder: (context, i) {
+        /*
+          One pixel high divider
+         */
+        if (i.isOdd) return const Divider();
+
+        /*
+          Divides i by 2 and returns an integer, truncated
+         */
+        final index = i ~/ 2;
+
+        if (index >= _suggestions.length) {
+          /*
+            Appends 10 more suggestions to the end of the suggestions list
+           */
+          _suggestions.addAll(generateWordPairs().take(10));
+        }
+
+        return _buildRow(_suggestions[index]);
+      }
+    );
+  }
+
+  @override
+  Widget _buildRow(WordPair pair) {
+    return ListTile(
+        title: Text(
+            pair.asPascalCase,
+            style: _biggerFont
+        )
+    );
+  }
+
+  Widget build(BuildContext context) {
+    // final wordPair = WordPair.random();
+    // return Text(wordPair.asPascalCase);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Startup Name Generator')
+      ),
+      body: _buildSuggestions()
+    );
+  }
+}
