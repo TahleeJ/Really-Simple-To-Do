@@ -98,15 +98,11 @@ class _CreatePageState extends State<CreatePage> {
       userRef = store.collection("users").doc(user.uid);
     }
 
-    var taskRef = store.collection("tasks");
+    List<String> keys = ['latitude', 'longitude'];
+    List<String> values = ["lat", "long"];
 
-    taskRef
-      .add({nameController.text: ["lat", "long"]
-    })
-        .then((value) => {
-      userRef
-        .set({nameController.text: value.id}, SetOptions(merge: true))
-    });
+    userRef
+        .set({"taskMap": {nameController.text: Map.fromIterables(keys, values)}}, SetOptions(merge: true));
 
     goHome();
   }
