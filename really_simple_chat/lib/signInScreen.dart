@@ -32,7 +32,7 @@ class _SignInScreenState extends State<SignInScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               const Text(
-                "GEEKS FOR GEEKS",
+                "Really Simple To Do",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
               Padding(
@@ -49,7 +49,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         decoration: const BoxDecoration(
                           image: DecorationImage(
                             image:
-                              AssetImage('assets/images/googleimage.png'),
+                              AssetImage('images/googlesigninicon.png'),
                             fit: BoxFit.cover),
                           shape: BoxShape.circle,
                         ),
