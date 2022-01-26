@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'homepage.dart';
+import 'signInScreen.dart';
 
 class CreatePage extends StatefulWidget {
   const CreatePage({Key? key}) : super(key: key);
@@ -11,6 +13,8 @@ class CreatePage extends StatefulWidget {
 }
 
 class _CreatePageState extends State<CreatePage> {
+  final nameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,6 +39,7 @@ class _CreatePageState extends State<CreatePage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                 child: TextFormField(
+                  controller: nameController,
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
                     labelText: 'Enter your TO DO task',
@@ -53,7 +58,7 @@ class _CreatePageState extends State<CreatePage> {
               Container(
                 margin: const EdgeInsets.only(top: 60),
                 child: ElevatedButton(
-                  onPressed: goHome,
+                  onPressed: storeItem,
                   child: const Text("Add Item", style: TextStyle(fontSize: 20)),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.amber,
@@ -80,6 +85,30 @@ class _CreatePageState extends State<CreatePage> {
         ],
       )
     );
+  }
+
+  final FirebaseFirestore store = FirebaseFirestore.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+  void storeItem() {
+    User? user = auth.currentUser;
+    late var userRef;
+
+    if (user != null) {
+      userRef = store.collection("users").doc(user.uid);
+    }
+
+    var taskRef = store.collection("tasks");
+
+    taskRef
+      .add({nameController.text: ["lat", "long"]
+    })
+        .then((value) => {
+      userRef
+        .set({nameController.text: value.id}, SetOptions(merge: true))
+    });
+
+    goHome();
   }
 
   void goHome() {

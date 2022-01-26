@@ -9,11 +9,11 @@ void main() async {
   await Firebase.initializeApp();
 
   // calling of runApp
-  runApp(GoogleSignIn());
+  runApp(const GoogleSignIn());
 }
 
 class GoogleSignIn extends StatefulWidget {
-  GoogleSignIn({Key? key}) : super(key: key);
+  const GoogleSignIn({Key? key}) : super(key: key);
   @override
   _GoogleSignInState createState() => _GoogleSignInState();
 }
@@ -34,7 +34,7 @@ class _GoogleSignInState extends State<GoogleSignIn> {
       ),
 
       // home property contain SignInScreen widget
-      home: SignInScreen(),
+      home: const SignInScreen(),
     );
   }
 }
