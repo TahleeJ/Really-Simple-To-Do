@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'homepage.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -20,8 +21,9 @@ class _SignInScreenState extends State<SignInScreen> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.blue,
               Colors.red,
+              Colors.deepOrange,
+              Colors.yellow,
             ],
           ),
         ),
@@ -33,39 +35,20 @@ class _SignInScreenState extends State<SignInScreen> {
             children: [
               const Text(
                 "Really Simple To Do",
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                child: MaterialButton(
-                  color: Colors.teal[100],
-                  elevation: 10,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: 30.0,
-                        width: 30.0,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image:
-                              AssetImage('images/googlesigninicon.png'),
-                            fit: BoxFit.cover),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      const Text("Sign In with Google")
-                    ],
-                  ),
-
-                  // by onpressed we call the function signup function
-                  onPressed: () {
-                    signup(context);
-                  },
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Material(
+                    child: SignInButton(
+                      Buttons.Google,
+                      onPressed: () {
+                        signup(context);
+                      },
+                    )
+                  )
+                ],
               )
             ],
           ),
