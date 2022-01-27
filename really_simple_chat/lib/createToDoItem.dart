@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'homepage.dart';
+import 'signInScreen.dart';
 
 class CreatePage extends StatefulWidget {
   const CreatePage({Key? key}) : super(key: key);
@@ -18,11 +20,20 @@ class _CreatePageState extends State<CreatePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.deepOrange,
-          centerTitle: true,
+        backgroundColor: Colors.deepOrange,
+        centerTitle: true,
 
-          // on appbar text
-          title: const Text("Really Simple To Do")
+        // on appbar text
+        title: const Text("Really Simple To Do"),
+        actions: <Widget>[
+          Padding(
+          padding: EdgeInsets.only(right: 20.0),
+            child: GestureDetector(
+              onTap: () { _signOut(); },
+              child: Icon(Icons.exit_to_app_outlined, size: 26.0)
+            )
+          )
+        ]
       ),
 
       resizeToAvoidBottomInset: false,
@@ -67,21 +78,21 @@ class _CreatePageState extends State<CreatePage> {
               )
             ],
           ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Container(
-              margin: const EdgeInsets.all(10.0),
-              child: ElevatedButton(
-                onPressed: goHome,
-                child: const Text("Go Back", style: TextStyle(fontSize: 20, color: Colors.white)),
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.grey,
-                  padding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 50),
-                )
-              )
-            )
-          )
         ],
+      ),
+      floatingActionButton: Stack(
+        children: [
+          Positioned(
+              left: 30,
+              bottom: 20,
+              child: FloatingActionButton(
+                onPressed: goHome,
+                child: const Icon(Icons.arrow_back),
+                // label: const Text("Add a To Do item"),
+                backgroundColor: Colors.grey
+              )
+          )
+        ]
       )
     );
   }
@@ -105,6 +116,19 @@ class _CreatePageState extends State<CreatePage> {
 
     goHome();
   }
+
+  Future<void> _signOut() async {
+    await auth.signOut();
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    googleSignIn.disconnect();
+    goSignIn();
+  }
+
+  void goSignIn() {
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => SignInScreen()));
+  }
+
 
   void goHome() {
     Navigator.pushReplacement(

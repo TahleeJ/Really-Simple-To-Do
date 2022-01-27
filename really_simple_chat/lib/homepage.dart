@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'createToDoItem.dart';
+import 'signInScreen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -18,11 +20,20 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.deepOrange,
-          centerTitle: true,
+        backgroundColor: Colors.deepOrange,
+        centerTitle: true,
 
-          // on appbar text
-          title: const Text("Really Simple To Do")
+        // on appbar text
+        title: const Text("Really Simple To Do"),
+        actions: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 20.0),
+            child: GestureDetector(
+              onTap: () { _signOut(); },
+              child: Icon(Icons.exit_to_app_outlined, size: 26.0)
+            )
+          )
+        ]
       ),
       body: FutureBuilder(
         future: _getUserTasks(),
@@ -45,19 +56,46 @@ class _HomePageState extends State<HomePage> {
           }
         }
       ),
-
       // In body text containing 'Home page ' in center
-      floatingActionButton: FloatingActionButton(
-        onPressed: goCreateItem,
-        child: const Icon(Icons.add_circle_outline),
-        // label: const Text("Add a To Do item"),
-        backgroundColor: Colors.red,
+      floatingActionButton: Stack(
+        children: [
+          Positioned(
+            right: 30,
+            bottom: 20,
+            child: FloatingActionButton(
+              heroTag: "addTaskButton",
+              onPressed: goCreateItem,
+              child: const Icon(Icons.add_circle_outline),
+              // label: const Text("Add a To Do item"),
+              backgroundColor: Colors.red,
+            )
+          ),
+          Positioned(
+            left: 30,
+            bottom: 20,
+            child: FloatingActionButton(
+              heroTag: "refreshButton",
+              onPressed: () {setState(){}},
+              child: const Icon(Icons.refresh_rounded),
+              // label: const Text("Add a To Do item"),
+              backgroundColor: Colors.amber,
+              foregroundColor: Colors.black,
+            )
+          )
+        ]
       ),
     );
   }
 
   final FirebaseFirestore store = FirebaseFirestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
+
+  Future<void> _signOut() async {
+    await auth.signOut();
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    googleSignIn.disconnect();
+    goSignIn();
+  }
 
   Future<List<Map<String, dynamic>>> _getUserTasks() async {
     var userRef = store.collection('users').doc(auth.currentUser?.uid);
@@ -136,13 +174,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   void deleteToDo(String taskName) {
-
+    var userRef = store.collection('users').doc(auth.currentUser?.uid);
+    userRef.update({taskName: FieldValue.delete()});
   }
 
   void showCreateItem() {
     setState(() {
       _isVisible = !_isVisible;
     });
+  }
+
+  void goSignIn() {
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => SignInScreen()));
   }
 
   void goCreateItem() {
