@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
             bottom: 20,
             child: FloatingActionButton(
               heroTag: "refreshButton",
-              onPressed: () {setState(){}},
+              onPressed: () {setState((){});},
               child: const Icon(Icons.refresh_rounded),
               // label: const Text("Add a To Do item"),
               backgroundColor: Colors.amber,
