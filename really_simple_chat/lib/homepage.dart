@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'createToDoItem.dart';
 
 class HomePage extends StatefulWidget {
@@ -23,19 +24,26 @@ class _HomePageState extends State<HomePage> {
           // on appbar text
           title: const Text("Really Simple To Do")
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(20.0),
-        children: <Widget>[
-          _buildToDoItem("This is a name", "1234", "5678"),
-          const Divider(
-            height: 20.0,
-            thickness: 1.0,
-            color: Colors.grey,
-            indent: 20.0,
-            endIndent: 20.0
-          ),
-          _buildToDoItem("Yet another name", "6546", "1373")
-        ]
+      body: FutureBuilder(
+        future: _getUserTasks(),
+        // initialData: [],
+        builder: (context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              padding: EdgeInsets.all(10.0),
+              itemCount: snapshot.data!.length,
+              itemBuilder: (BuildContext context, int index) {
+                return _buildToDoItem(
+                  snapshot.data![index]["name"],
+                  snapshot.data![index]["latitude"],
+                  snapshot.data![index]["longitude"]
+                );
+              }
+            );
+          } else {
+            return const CircularProgressIndicator();
+          }
+        }
       ),
 
       // In body text containing 'Home page ' in center
@@ -48,13 +56,28 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Widget _buildToDoItems() {
-  //   return ListView.builder(
-  //     itemBuilder: (context, i) {
-  //
-  //     },
-  //   );
-  // }
+  final FirebaseFirestore store = FirebaseFirestore.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+  Future<List<Map<String, dynamic>>> _getUserTasks() async {
+    var userRef = store.collection('users').doc(auth.currentUser?.uid);
+    var userSnapshot = await userRef.get();
+    Map<String, dynamic> userTasks;
+
+    List<Map<String, dynamic>> userTaskList = [];
+
+    if (userSnapshot.exists) {
+      userTasks = userSnapshot.data()!;
+      userTasks.forEach((key, mapValue) {
+        List<String> keys = ['name', 'latitude', 'longitude'];
+        List<String> values = [key, mapValue["latitude"], mapValue["longitude"]];
+
+        userTaskList.add(Map.fromIterables(keys, values));
+      });
+    }
+
+    return userTaskList;
+  }
 
   Widget _buildToDoItem(String name, String latitude, String longitude) {
     bool _isChecked = false;
@@ -71,30 +94,42 @@ class _HomePageState extends State<HomePage> {
       return Colors.blue;
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Expanded(
-          flex: 2,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('${name}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              Text('Latitude: ${latitude}, Longitude:${longitude}', style: TextStyle(fontSize: 14))
-            ]
-          )
-        ),
-        StatefulBuilder( builder: (context, _setState) =>
-            Checkbox(
-              fillColor: MaterialStateColor.resolveWith((states) => getColor(states)),
-              value: _isChecked,
-              onChanged: (value) {
-                _setState(() {
-                  _isChecked = value!;
-                  deleteToDo(name);
-                });
-              }
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text('${name}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text('Latitude: ${latitude}, Longitude:${longitude}', style: TextStyle(fontSize: 14))
+                ]
+              )
+            ),
+            StatefulBuilder( builder: (context, _setState) =>
+              Checkbox(
+                fillColor: MaterialStateColor.resolveWith((states) => getColor(states)),
+                value: _isChecked,
+                onChanged: (value) {
+                  _setState(() {
+                    _isChecked = value!;
+                    deleteToDo(name);
+                  });
+                }
+              )
             )
+          ]
+        ),
+        const Divider(
+          height: 20.0,
+          thickness: 1.0,
+          color: Colors.grey,
+          indent: 20.0,
+          endIndent: 20.0
         )
       ]
     );

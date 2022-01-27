@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'homepage.dart';
-import 'signInScreen.dart';
 
 class CreatePage extends StatefulWidget {
   const CreatePage({Key? key}) : super(key: key);
@@ -102,7 +101,7 @@ class _CreatePageState extends State<CreatePage> {
     List<String> values = ["lat", "long"];
 
     userRef
-        .set({"taskMap": {nameController.text: Map.fromIterables(keys, values)}}, SetOptions(merge: true));
+        .set({nameController.text: Map.fromIterables(keys, values)}, SetOptions(merge: true));
 
     goHome();
   }
