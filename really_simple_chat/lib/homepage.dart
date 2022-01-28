@@ -60,7 +60,21 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: Stack(
         children: [
           Positioned(
-            right: 30,
+              right: 125,
+              bottom: 150,
+              child: FloatingActionButton.extended(
+                shape: BeveledRectangleBorder(
+                    borderRadius: BorderRadius.zero
+                ),
+                heroTag: "nearbyPlacesButton",
+                onPressed: null,
+                label: Text('tasks nearby'),
+                // label: const Text("Add a To Do item"),
+                backgroundColor: Colors.green,
+              )
+          ),
+          Positioned(
+            right: 10,
             bottom: 20,
             child: FloatingActionButton(
               heroTag: "addTaskButton",
@@ -190,6 +204,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   void goCreateItem() {
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => CreatePage()));
+  }
+
+  void goDisplayMap() {
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => CreatePage()));
   }
