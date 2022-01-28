@@ -13,8 +13,7 @@ buildscript {
 }
 
 allprojects {
-    reposito
-    ries {
+    repositories {
         google()
         mavenCentral()
     }

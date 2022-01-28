@@ -133,71 +133,68 @@ class _HomePageState extends State<HomePage> {
     return userTaskList;
   }
 
- /// Custom task object builder using the task's [name] and location([latitude] and [longitude)
+  /// Custom task object builder using the task's [name] and location([latitude] and [longitude)
   Widget _buildToDoItem(String name, String latitude, String longitude) {
-    bool _isChecked = false;
-
-    /// Changes the color of a task object's checkbox based on the user's current interactivity with it
-    Color getColor(Set<MaterialState> states) {
-      const Set<MaterialState> interactiveStates = <MaterialState>{
-        MaterialState.pressed,
-        MaterialState.hovered,
-        MaterialState.focused,
-      };
-      if (states.any(interactiveStates.contains)) {
-        return Colors.amberAccent;
-      }
-      return Colors.blue;
-    }
+    bool _isDeleted = false;
 
     // Custom task object
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  // Task information
-                  Text('${name}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  Text('Latitude: ${latitude}, Longitude:${longitude}', style: TextStyle(fontSize: 14))
-                ]
+        StatefulBuilder(builder: (context, _setState) =>
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    // Task information
+                    Text('${name}', style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        // Change color once it has been deleted
+                        color: (_isDeleted) ? Colors.red : Colors.black,
+                        // Strikethrough task name once it has been deleted
+                        decoration: (_isDeleted) ? TextDecoration.lineThrough : TextDecoration.none
+                      )
+                    ),
+                    Text('Latitude: ${latitude}, Longitude:${longitude}', style: TextStyle(fontSize: 14))
+                  ]
+                )
+              ),
+              // Delete button
+              GestureDetector(
+                  onTap: () {
+                    _setState(() {
+                      // If the task has not been deleted yet and the delete button has been pressed,
+                      // the task name will be struck through and it and its delete button will turn red
+                      if (!_isDeleted) {
+                        _isDeleted = true;
+                        _deleteToDo(name);
+                      }
+                    });
+                  },
+                  child: Icon(Icons.delete, size: 26.0, color: (_isDeleted) ? Colors.red : Colors.black)
               )
-            ),
-            // Checkbox builder
-            StatefulBuilder( builder: (context, _setState) =>
-              Checkbox(
-                fillColor: MaterialStateColor.resolveWith((states) => getColor(states)),
-                value: _isChecked,
-                // Change checkbox appearance and delete task from Firestore upon checking the box
-                onChanged: (value) {
-                  _setState(() {
-                    _isChecked = value!;
-                    deleteToDo(name);
-                  });
-                }
-              )
-            )
-          ]
+            ]
+          ),
         ),
-        /// Divider underneath each task object
+        // Divider underneath each task object
         const Divider(
-          height: 20.0,
-          thickness: 1.0,
-          color: Colors.grey,
-          indent: 20.0,
-          endIndent: 20.0
+            height: 20.0,
+            thickness: 1.0,
+            color: Colors.grey,
+            indent: 20.0,
+            endIndent: 20.0
         )
       ]
     );
   }
 
   /// Deletes currently signed user task under the name [taskName] from Firestore
-  void deleteToDo(String taskName) {
+  void _deleteToDo(String taskName) {
     var userRef = store.collection('users').doc(auth.currentUser?.uid);
     userRef.update({taskName: FieldValue.delete()});
   }

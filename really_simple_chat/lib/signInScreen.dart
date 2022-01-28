@@ -74,9 +74,15 @@ class _SignInScreenState extends State<SignInScreen> {
           idToken: googleSignInAuthentication.idToken,
           accessToken: googleSignInAuthentication.accessToken);
 
-      // Navigates to the home page screen
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => HomePage()));
+      // Gets a user's credentials
+      UserCredential result = await auth.signInWithCredential(authCredential);
+      User? user = result.user;
+
+      // Navigates to the home page screen once the user has signed in
+      if (result != null) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => HomePage()));
+      }
     }
   }
 }

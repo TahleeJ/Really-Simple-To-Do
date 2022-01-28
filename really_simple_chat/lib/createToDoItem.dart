@@ -109,12 +109,8 @@ class _CreatePageState extends State<CreatePage> {
 
   /// Stores a new task to the currently signed in user's document in Firestore
   void _storeItem() {
-    User? user = auth.currentUser;
-    late var userRef;
-
-    if (user != null) {
-      userRef = store.collection("users").doc(user.uid);
-    }
+    User user = auth.currentUser!;
+    late var userRef = store.collection("users").doc(user.uid);
 
     List<String> keys = ['latitude', 'longitude'];
     List<String> values = ["lat", "long"];
