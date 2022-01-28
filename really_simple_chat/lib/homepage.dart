@@ -66,11 +66,24 @@ class _HomePageState extends State<HomePage> {
         children: [
           Positioned(
             // Add task button
-            right: 30,
+            right: 125,
+            bottom: 150,
+            child: FloatingActionButton.extended(
+              shape: BeveledRectangleBorder(
+                  borderRadius: BorderRadius.zero
+              ),
+              heroTag: "nearbyPlacesButton",
+              onPressed: null,
+              label: Text('tasks nearby'),
+              backgroundColor: Colors.green,
+            )
+        ),
+          Positioned(
+            right: 10,
             bottom: 20,
             child: FloatingActionButton(
               heroTag: "addTaskButton",
-              /// Navigate to the create task page upon pressing the button
+              // Navigate to the create task page upon pressing the button
               onPressed: _goCreateItem,
               child: const Icon(Icons.add_circle_outline),
               backgroundColor: Colors.red,
@@ -82,7 +95,7 @@ class _HomePageState extends State<HomePage> {
             bottom: 20,
             child: FloatingActionButton(
               heroTag: "refreshButton",
-              /// Refresh the page to eliminate deleted tasks from displaying upon pressing the button
+              // Refresh the page to eliminate deleted tasks from displaying upon pressing the button
               onPressed: () {setState((){});},
               child: const Icon(Icons.refresh_rounded),
               backgroundColor: Colors.amber,
@@ -205,6 +218,11 @@ class _HomePageState extends State<HomePage> {
 
   /// Navigates to the create task screen
   void _goCreateItem() {
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => CreatePage()));
+  }
+
+  void goDisplayMap() {
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => CreatePage()));
   }

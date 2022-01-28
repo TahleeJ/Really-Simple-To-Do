@@ -4,6 +4,11 @@
         android:label="Real Simple ToDo"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+
+       <!-- TODO: Add your Google Maps API key here -->
+       <meta-data android:name="com.google.android.geo.API_KEY"
+           android:value="AIzaSyDpJoU1F4ubIH4BroBOP3lzH8o_U-OiyR8"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
