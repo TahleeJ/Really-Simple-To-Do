@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'homepage.dart';
 
+/// Stateful class controlling the sign in page
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
 
@@ -12,6 +13,10 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  // Project's Firebase authentication instance
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+  /// Builder for the homepage screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,6 +32,7 @@ class _SignInScreenState extends State<SignInScreen> {
             ],
           ),
         ),
+        // Card containing app name and sign in button
         child: Card(
           margin: const EdgeInsets.only(top: 200, bottom: 200, left: 30, right: 30),
           elevation: 20,
@@ -40,12 +46,12 @@ class _SignInScreenState extends State<SignInScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  // Sign in button
                   Material(
                     child: SignInButton(
                       Buttons.Google,
-                      onPressed: () {
-                        signup(context);
-                      },
+                      // Handle the sign up/sign in process upon being pressed
+                      onPressed: () {signup(context);},
                     )
                   )
                 ],
@@ -57,12 +63,7 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-
-// function to implement the google signin
-
-// creating firebase instance
-  final FirebaseAuth auth = FirebaseAuth.instance;
-
+  /// Signs in a user
   Future<void> signup(BuildContext context) async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
@@ -73,17 +74,9 @@ class _SignInScreenState extends State<SignInScreen> {
           idToken: googleSignInAuthentication.idToken,
           accessToken: googleSignInAuthentication.accessToken);
 
-
-
-      // Getting users credential
-      UserCredential result = await auth.signInWithCredential(authCredential);
-      User? user = result.user;
-
-      if (result != null) {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
-      }  // if result not null we simply call the MaterialpageRoute,
-      // for go to the HomePage screen
+      // Navigates to the home page screen
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => HomePage()));
     }
   }
 }
