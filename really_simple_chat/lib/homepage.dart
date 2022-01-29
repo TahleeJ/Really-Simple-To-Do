@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/material.dart';
 import 'createToDoItem.dart';
 import 'signInScreen.dart';
 
@@ -17,6 +19,15 @@ class _HomePageState extends State<HomePage> {
   // Project's Firebase Build feature instances
   final FirebaseFirestore store = FirebaseFirestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
+
+  late GoogleMapController mapController;
+
+  final LatLng _center = const LatLng(45.521563, -122.677433);
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
 
   /// Builder for the homepage screen
   @override
@@ -61,6 +72,7 @@ class _HomePageState extends State<HomePage> {
           }
         }
       ),
+
       // All floating action buttons appearing on the screen
       floatingActionButton: Stack(
         children: [
@@ -73,7 +85,42 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.zero
               ),
               heroTag: "nearbyPlacesButton",
-              onPressed: null,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Dialog(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Container(
+                        child: ListView(
+                          shrinkWrap: true,
+
+                          children: <Widget>[
+                            SizedBox(height: 20),
+                            Center(child: Text('Google Map')),
+                            SizedBox(
+                              width: 200,
+                              height: 200,
+                              child: GoogleMap(
+                            //that needs a list<Polyline>
+                            onMapCreated: _onMapCreated,
+                            myLocationEnabled:true,
+                            initialCameraPosition: CameraPosition(
+                              target: _center,
+                              zoom: 11.0,
+                            ),
+
+                            mapType: MapType.normal,
+                          ))
+
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
               label: Text('tasks nearby'),
               backgroundColor: Colors.green,
             )
