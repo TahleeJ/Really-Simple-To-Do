@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'createToDoItem.dart';
 import 'signInScreen.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 /// Stateful class controlling the home page
 class HomePage extends StatefulWidget {
@@ -23,6 +24,11 @@ class _HomePageState extends State<HomePage> {
   late GoogleMapController mapController;
 
   final LatLng _center = const LatLng(45.521563, -122.677433);
+
+  static final CameraPosition _initialCameraPos = CameraPosition(
+    target: LatLng(51.4193446, 0.0147306),
+    zoom: 9.0,
+  );
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -102,18 +108,14 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(
                               width: 200,
                               height: 200,
-                              child: GoogleMap(
-                            //that needs a list<Polyline>
-                            onMapCreated: _onMapCreated,
-                            myLocationEnabled:true,
-                            initialCameraPosition: CameraPosition(
-                              target: _center,
-                              zoom: 11.0,
-                            ),
-
-                            mapType: MapType.normal,
-                          ))
-
+                              child: Scaffold(
+                                  body:
+                              GoogleMap(
+                                onMapCreated: _onMapCreated,
+                                initialCameraPosition: _initialCameraPos,
+                                mapType: MapType.normal,
+                              ))
+                            )
                           ],
                         ),
                       ),
