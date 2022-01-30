@@ -1,8 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.reallysimple.really_simple_chat">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-
    <application
 
         android:label="Real Simple ToDo"

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'createToDoItem.dart';
 import 'signInScreen.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:location/location.dart';
 
 /// Stateful class controlling the home page
 class HomePage extends StatefulWidget {
@@ -22,16 +23,24 @@ class _HomePageState extends State<HomePage> {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   late GoogleMapController mapController;
+  Location location = Location();
 
-  final LatLng _center = const LatLng(45.521563, -122.677433);
+  final Set<Marker> markers = new Set();
+  static const LatLng showLocation = const LatLng(37.3852, -122.1141);
 
-  static final CameraPosition _initialCameraPos = CameraPosition(
-    target: LatLng(51.4193446, 0.0147306),
-    zoom: 9.0,
-  );
+  int firstOpen = 0;
+
+  LatLng _initialCameraPos = LatLng(20.5937, 67.32);
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+    location.onLocationChanged.listen((l) {
+        controller.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(target: LatLng(l.latitude!, l.longitude!),zoom: 12),
+          ),
+        );
+    });
   }
 
 
@@ -91,37 +100,39 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.zero
               ),
               heroTag: "nearbyPlacesButton",
-              onPressed: () {
+              onPressed: () => {
                 showDialog(
                   context: context,
                   builder: (context) {
-                    return Dialog(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Container(
-                        child: ListView(
-                          shrinkWrap: true,
-
-                          children: <Widget>[
-                            SizedBox(height: 20),
-                            Center(child: Text('Google Map')),
-                            SizedBox(
-                              width: 200,
-                              height: 200,
-                              child: Scaffold(
-                                  body:
-                              GoogleMap(
-                                onMapCreated: _onMapCreated,
-                                initialCameraPosition: _initialCameraPos,
-                                mapType: MapType.normal,
-                              ))
-                            )
-                          ],
-                        ),
+                    final Set<Marker> markers = new Set();
+                    markers.add(Marker( //add first marker
+                      markerId: MarkerId(showLocation.toString()),
+                      position: showLocation, //position of marker
+                      infoWindow: InfoWindow( //popup info
+                        title: 'My Custom Title ',
+                        snippet: 'My Custom Subtitle',
                       ),
-                    );
+                      icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+                    ));
+                      return Dialog(
+                          child:
+                                SizedBox(
+                                    width: 500,
+                                    height: 600,
+                                    child: GoogleMap(
+                                      onMapCreated: _onMapCreated,
+                                      initialCameraPosition: CameraPosition(
+                                          target: _initialCameraPos),
+                                      mapType: MapType.normal,
+                                      myLocationEnabled: true,
+                                      markers: getmarkers(),
+                                      zoomGesturesEnabled: true,
+                                    )
+                                )
+
+                      );
                   },
-                );
+                )
               },
               label: Text('tasks nearby'),
               backgroundColor: Colors.green,
@@ -271,5 +282,19 @@ class _HomePageState extends State<HomePage> {
   void goDisplayMap() {
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => CreatePage()));
+  }
+
+  Set<Marker> getmarkers() { //markers to place on map
+      markers.add(Marker( //add first marker
+        markerId: MarkerId(showLocation.toString()),
+        position: showLocation, //position of marker
+        infoWindow: InfoWindow( //popup info
+          title: 'Marker Title First ',
+          snippet: 'My Custom Subtitle',
+        ),
+        icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+      ));
+
+    return markers;
   }
 }
