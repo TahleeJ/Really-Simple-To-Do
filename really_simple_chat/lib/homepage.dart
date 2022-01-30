@@ -27,8 +27,9 @@ class _HomePageState extends State<HomePage> {
 
   final Set<Marker> markers = new Set();
   static const LatLng showLocation = const LatLng(37.3852, -122.1141);
+  static const LatLng showLocation1 = const LatLng(37.3900, -122.1141);
 
-  int firstOpen = 0;
+  var latsLongs = [];
 
   LatLng _initialCameraPos = LatLng(20.5937, 67.32);
 
@@ -78,7 +79,8 @@ class _HomePageState extends State<HomePage> {
                 return _buildToDoItem(
                   snapshot.data![index]["name"],
                   snapshot.data![index]["latitude"],
-                  snapshot.data![index]["longitude"]
+                  snapshot.data![index]["longitude"],
+                  addLatsLongs(snapshot.data![index]["name"], snapshot.data![index]["latitude"], snapshot.data![index]["longitude"])
                 );
               }
             );
@@ -104,16 +106,7 @@ class _HomePageState extends State<HomePage> {
                 showDialog(
                   context: context,
                   builder: (context) {
-                    final Set<Marker> markers = new Set();
-                    markers.add(Marker( //add first marker
-                      markerId: MarkerId(showLocation.toString()),
-                      position: showLocation, //position of marker
-                      infoWindow: InfoWindow( //popup info
-                        title: 'My Custom Title ',
-                        snippet: 'My Custom Subtitle',
-                      ),
-                      icon: BitmapDescriptor.defaultMarker, //Icon for Marker
-                    ));
+
                       return Dialog(
                           child:
                                 SizedBox(
@@ -194,7 +187,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// Custom task object builder using the task's [name] and location([latitude] and [longitude)
-  Widget _buildToDoItem(String name, String latitude, String longitude) {
+  Widget _buildToDoItem(String name, String latitude, String longitude, void addLatsLongs) {
     bool _isDeleted = false;
 
     // Custom task object
@@ -259,6 +252,14 @@ class _HomePageState extends State<HomePage> {
     userRef.update({taskName: FieldValue.delete()});
   }
 
+  void addLatsLongs(String name, String lat, String long) {
+    if (lat != null && long != null && double.tryParse(lat) != null && double.tryParse(long) != null) {
+      latsLongs.add(name);
+      latsLongs.add(lat);
+      latsLongs.add(long);
+    }
+  }
+
   /// Navigates to the sign in screen
   void goSignIn() {
     Navigator.pushReplacement(
@@ -285,15 +286,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   Set<Marker> getmarkers() { //markers to place on map
-      markers.add(Marker( //add first marker
-        markerId: MarkerId(showLocation.toString()),
-        position: showLocation, //position of marker
-        infoWindow: InfoWindow( //popup info
-          title: 'Marker Title First ',
-          snippet: 'My Custom Subtitle',
-        ),
-        icon: BitmapDescriptor.defaultMarker, //Icon for Marker
-      ));
+      for (var i = 0; i < latsLongs.length; i += 3) {
+        LatLng showLocation = LatLng(double.parse(latsLongs[i + 1]), double.parse(latsLongs[i + 2]));
+        markers.add(Marker( //add first marker
+          markerId: MarkerId(showLocation.toString()),
+          position: showLocation, //position of marker
+          infoWindow: InfoWindow( //popup info
+            title: latsLongs[i],
+            snippet: 'My Custom Subtitle',
+          ),
+          icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+        ));
+      }
 
     return markers;
   }

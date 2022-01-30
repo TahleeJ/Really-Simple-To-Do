@@ -20,6 +20,8 @@ class _CreatePageState extends State<CreatePage> {
 
   // Controller managing the inputted task name's TextFormField
   final nameController = TextEditingController();
+  final latController = TextEditingController();
+  final longController = TextEditingController();
 
   /// Builder for the homepage screen
   @override
@@ -66,9 +68,20 @@ class _CreatePageState extends State<CreatePage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                 child: TextFormField(
+                  controller: latController,
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
-                    labelText: 'Just another input field...',
+                    labelText: 'Latitude',
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                child: TextFormField(
+                  controller: longController,
+                  decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Longitude',
                   ),
                 ),
               ),
@@ -113,7 +126,7 @@ class _CreatePageState extends State<CreatePage> {
     late var userRef = store.collection("users").doc(user.uid);
 
     List<String> keys = ['latitude', 'longitude'];
-    List<String> values = ["lat", "long"];
+    List<String> values = [latController.text, longController.text];
 
     // Stores the new task information in a map:
     // {task's name: {
